@@ -35,6 +35,23 @@ app.post("/api/notes", (req, res) => {
             id: Math.random()   // replace with npm package?
         };
 
+        fs.readFile("./db/db.json", "utf8", (err, data) => {
+            if (err) {
+                console.log(err);
+                res.status(400).json("Error reading file");
+            } else {
+                console.log(data);
+
+                const notesList = JSON.parse(data);
+                notesList.push(newNote);
+
+                // Write the updated notesList to db.json
+                fs.writeFile("./db/db.json", JSON.stringify(notesList, null, "\t"), (err) =>
+                    err ? console.error(err) : console.log(`Note ${newNote.id} has been written to db.JSON file`)
+                );
+            }
+        });
+
         const response = {
             status: "success",
             body: newNote
