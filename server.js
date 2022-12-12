@@ -2,6 +2,10 @@ const express = require("express");
 const db = require("./db/db.json");
 const fs = require("fs");
 const path = require("path");
+const util = require("util");
+
+// Promise version of fs.readFile
+const readFromFile = util.promisify(fs.readFile);
 
 const PORT = 3001;
 const app = express();
@@ -20,7 +24,7 @@ app.get("/notes", (req, res) => {
 // Read db.json and return all saved notes as JSON
 app.get("/api/notes", (req, res) => {
     console.info(`${req.method} /api/notes`);
-    res.status(200).json(db);
+    readFromFile("./db/db.json").then((data) => res.json(JSON.parse(data)));   
 });
 
 // POST request to save a new note
