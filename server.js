@@ -3,6 +3,7 @@ const db = require("./db/db.json");
 const fs = require("fs");
 const path = require("path");
 const util = require("util");
+const {v4: uuidv4} = require("uuid");   // create random UUID
 
 // Promise version of fs.readFile
 const readFromFile = util.promisify(fs.readFile);
@@ -36,7 +37,7 @@ app.post("/api/notes", (req, res) => {
         const newNote = {
             title,
             text,
-            id: Math.random()   // replace with npm package?
+            id: uuidv4()
         };
 
         fs.readFile("./db/db.json", "utf8", (err, data) => {
@@ -66,6 +67,36 @@ app.post("/api/notes", (req, res) => {
     } else {
         res.status(500).json("Error in posting note");
     }
+});
+
+app.delete("/api/notes/:id", (req, res) => {
+    const deleteNoteID = req.params.id;
+    
+    readFromFile("./db/db.json", "utf8", (err, data) => {
+        if (err) {
+            console.log(err);
+            res.status(400).json("Error reading file");
+        } else {
+            console.log(data);
+            const notesList = JSON.parse(data);
+            notesList.forEach((note, i) => {
+                if (note.id === deleteNoteID) {
+                    notesList.splice(i, 1);
+                }
+            });
+            // Write the updated notesList to db.json
+            fs.writeFile("./db/db.json", JSON.stringify(notesList, null, "\t"), (err) =>
+                err ? console.error(err) : console.log(`Note ${deleteNoteID} has been deleted from db.JSON file`)
+            );
+        }
+    });
+
+    const response = {
+        status: "success",
+    };
+
+    console.log(response);
+    res.status(201).json(response);
 });
 
 // Wildcard (fallback route)
