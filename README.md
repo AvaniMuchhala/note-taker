@@ -18,10 +18,10 @@ npm install
 ```
 
 ## Usage
-Click on the deployed app URL:
+Click on the deployed app URL: [https://avani-note-taker.herokuapp.com/](https://avani-note-taker.herokuapp.com/)
 
 Below is an animation demonstrating the functionality of the application:
-
+![Note taker demo](./assets/note-taker-demo.gif)
 
 ## License
 
